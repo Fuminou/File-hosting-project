@@ -47,7 +47,9 @@ def open_upload_files():
 
 def handle_drop(event):
     files = event.data
-    handle_files(files)
+    file_list = window.tk.splitlist(files)
+    handle_files(file_list)
+
 
 def choose_files():
     files = filedialog.askopenfilenames()
