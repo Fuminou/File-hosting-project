@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinterdnd2 import DND_FILES, TkinterDnD
 
 upload_window = None
 view_files_window = None
@@ -25,11 +26,9 @@ def open_upload_files():
     lbl_drag_drop = tk.Label(upload_window, text="Drag and drop files here", bg="lightgray", width=30, height=10)
     lbl_drag_drop.pack(pady=10)
 
-    # Allow drag and drop functionality
-    lbl_drag_drop.bind('<Drop>', handle_drop)
-    lbl_drag_drop.bind('<DragEnter>', handle_drag_enter)
-    lbl_drag_drop.bind('<DragLeave>', handle_drag_leave)
-    lbl_drag_drop.bind('<DragOver>', handle_drag_over)
+    # Enable drag and drop functionality for the label
+    lbl_drag_drop.drop_target_register(DND_FILES)
+    lbl_drag_drop.dnd_bind('<<Drop>>', handle_drop)
 
     # Create a button to manually choose files
     btn_choose_files = tk.Button(upload_window, text="Choose Files", command=choose_files)
@@ -49,15 +48,6 @@ def open_upload_files():
 def handle_drop(event):
     files = event.data
     handle_files(files)
-
-def handle_drag_enter(event):
-    event.widget.configure(bg="gray")
-
-def handle_drag_leave(event):
-    event.widget.configure(bg="lightgray")
-
-def handle_drag_over(event):
-    event.widget.configure(bg="gray")
 
 def choose_files():
     files = filedialog.askopenfilenames()
@@ -131,7 +121,7 @@ def go_back_view_upload_history():
     window.deiconify()
 
 # Create the main window
-window = tk.Tk()
+window = TkinterDnD.Tk()
 
 # Set the window size
 window.geometry("500x500")
