@@ -6,6 +6,7 @@ upload_window = None
 view_files_window = None
 view_upload_history_window = None
 uploaded_files = []
+view_uploaded_files = []
 
 def open_upload_files():
     global upload_window
@@ -50,7 +51,6 @@ def handle_drop(event):
     file_list = window.tk.splitlist(files)
     handle_files(file_list)
 
-
 def choose_files():
     files = filedialog.askopenfilenames()
     handle_files(files)
@@ -62,8 +62,9 @@ def handle_files(files):
             upload_window.list_files.insert(tk.END, file)
 
 def upload_files():
-    # Implement the upload functionality here
-    pass
+    # Update the view uploaded files list
+    global view_uploaded_files
+    view_uploaded_files = uploaded_files.copy()
 
 def open_view_files():
     global view_files_window
@@ -80,6 +81,8 @@ def open_view_files():
     btn_back = tk.Button(view_files_window, text="Back", command=go_back_view_files)
     btn_back.pack()
 
+    # Add the desired functionality for the View Files window here
+
 def open_view_upload_history():
     global view_upload_history_window
 
@@ -95,14 +98,27 @@ def open_view_upload_history():
     btn_back = tk.Button(view_upload_history_window, text="Back", command=go_back_view_upload_history)
     btn_back.pack()
 
+    # Create a listbox to display uploaded files
+    list_files = tk.Listbox(view_upload_history_window, width=40, height=10)
+    list_files.pack(pady=10)
+
+    # Populate the listbox with the uploaded files for view upload history
+    for file in view_uploaded_files:
+        list_files.insert(tk.END, file)
+
 def go_back_upload_files():
     global upload_window
+    global uploaded_files
+
+    # Clear the uploaded files list
+    uploaded_files = []
 
     # Destroy the upload window
     upload_window.destroy()
 
     # Show the main window
     window.deiconify()
+
 
 def go_back_view_files():
     global view_files_window
