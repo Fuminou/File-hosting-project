@@ -66,6 +66,30 @@ def upload_files():
     global view_uploaded_files
     view_uploaded_files = uploaded_files.copy()
 
+    # Create a pop-up window to display the message
+    popup_window = tk.Toplevel(upload_window)
+    popup_window.title("Upload Status")
+    popup_window.geometry("200x100")
+
+    # Create a label to show the upload status message
+    lbl_status = tk.Label(popup_window, text="Files have been uploaded!")
+    lbl_status.pack(pady=20)
+
+    def close_popup():
+        # Destroy the pop-up window and go back to the main screen
+        popup_window.destroy()
+        window.deiconify()
+        
+    def close_window():
+        # Destroy the pop-up window and go back to the main screen
+        upload_window.destroy()
+        window.deiconify()
+
+    # Automatically close the pop-up window after a delay (e.g., 2000 milliseconds)
+    popup_window.after(1000, close_popup)
+    upload_window.after(1000, close_window)
+
+
 def open_view_files():
     global view_files_window
 
