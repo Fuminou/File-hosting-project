@@ -1,12 +1,18 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinterdnd2 import DND_FILES, TkinterDnD
+from db import *
 
 upload_window = None
 view_files_window = None
 view_upload_history_window = None
 uploaded_files = []
 view_uploaded_files = []
+
+#################################################
+# DATABASE STUFF HERE                           #
+#################################################
+filedb = Database()
 
 def open_upload_files():
     global upload_window
@@ -46,20 +52,24 @@ def open_upload_files():
     # Store the listbox widget in a global variable for later use
     upload_window.list_files = list_files
 
+
 def handle_drop(event):
     files = event.data
     file_list = window.tk.splitlist(files)
     handle_files(file_list)
 
+
 def choose_files():
     files = filedialog.askopenfilenames()
     handle_files(files)
+
 
 def handle_files(files):
     for file in files:
         if file not in uploaded_files:
             uploaded_files.append(file)
             upload_window.list_files.insert(tk.END, file)
+
 
 def upload_files():
     # Update the view uploaded files list
@@ -79,7 +89,7 @@ def upload_files():
         # Destroy the pop-up window and go back to the main screen
         popup_window.destroy()
         window.deiconify()
-        
+
     def close_window():
         # Destroy the pop-up window and go back to the main screen
         upload_window.destroy()
@@ -107,6 +117,7 @@ def open_view_files():
 
     # Add the desired functionality for the View Files window here
 
+
 def open_view_upload_history():
     global view_upload_history_window
 
@@ -128,7 +139,9 @@ def open_view_upload_history():
 
     # Populate the listbox with the uploaded files for view upload history
     for file in view_uploaded_files:
+        print(type(file))
         list_files.insert(tk.END, file)
+
 
 def go_back_upload_files():
     global upload_window
@@ -153,6 +166,7 @@ def go_back_view_files():
     # Show the main window
     window.deiconify()
 
+
 def go_back_view_upload_history():
     global view_upload_history_window
 
@@ -161,6 +175,7 @@ def go_back_view_upload_history():
 
     # Show the main window
     window.deiconify()
+
 
 # Create the main window
 window = TkinterDnD.Tk()
@@ -175,7 +190,8 @@ label_welcome.pack(pady=20)
 # Create the buttons
 btn_upload_files = tk.Button(window, text="Upload Files", command=open_upload_files, width=15, height=2)
 btn_view_files = tk.Button(window, text="View Files", command=open_view_files, width=15, height=2)
-btn_view_upload_history = tk.Button(window, text="View Upload History", command=open_view_upload_history, width=15, height=2)
+btn_view_upload_history = tk.Button(window, text="View Upload History", command=open_view_upload_history, width=15,
+                                    height=2)
 
 # Position the buttons using the place() geometry manager
 btn_upload_files.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
