@@ -207,3 +207,4 @@ btn_view_upload_history.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
 # Start the main loop
 window.mainloop()
+file_db.close()

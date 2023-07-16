@@ -40,7 +40,7 @@ class Database:
     Simple method that inserts a file into the database
     """
 
-    def insert_file(self, file_name: str, file_content) -> None | str:
+    def insert_file(self, file_name: str, file_content: bytes) -> None | str:
         try:
             self.cursor.execute("INSERT INTO files (filename, contents) VALUES (?, ?)", (file_name, file_content))
             self.conn.commit()
@@ -52,7 +52,7 @@ class Database:
     Simple query method to find a file by its name, may add queries by index in the future
     """
 
-    def query_file(self, file_name) -> list | str:
+    def query_file(self, file_name: str) -> list | str:
         try:
             self.cursor.execute("SELECT * FROM files WHERE filename = ?", (file_name,))
             return self.cursor.fetchall()
@@ -64,8 +64,16 @@ class Database:
     Returns only the contents of the queried file.
     """
 
-    def query_file_content(self, file_name):
+    def query_file_content(self, file_name: str) -> bytes:
         return self.query_file(file_name)[0][1]
+
+    """
+    Writes the contents of the file to the local machines file system
+    """
+
+    def download_file(self, path: str, file_name: str) -> None:
+        with open(path, "wb") as f:
+            f.write(self.query_file_content(file_name))
 
     """
     Gets all the files in the db
@@ -91,6 +99,8 @@ class Database:
 # spinning up the db for the first time
 if __name__ == "__main__":
     db = Database()
+
+    db.download_file("C:/Users/user/Downloads/db_test.pdf", "C:/Users/user/Downloads/FIT2081-Notes (1).pdf")
 
     # little test script here to see if we can actually add shit
     db.clear_db()
