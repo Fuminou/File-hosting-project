@@ -50,10 +50,9 @@ class Database:
 
     """
     Simple query method to find a file by its name, may add queries by index in the future
-    TODO return the contents of the file, aka the binary associated with the file name
     """
 
-    def query_file(self, file_name):
+    def query_file(self, file_name) -> list | str:
         try:
             self.cursor.execute("SELECT * FROM files WHERE filename = ?", (file_name,))
             return self.cursor.fetchall()
@@ -62,10 +61,17 @@ class Database:
             return "There was an error retrieving those entries"
 
     """
+    Returns only the contents of the queried file.
+    """
+
+    def query_file_content(self, file_name):
+        return self.query_file(file_name)[0][1]
+
+    """
     Gets all the files in the db
     """
 
-    def get_all_files(self):
+    def get_all_files(self) -> list | str:
         try:
             self.cursor.execute("SELECT * FROM files")
             return self.cursor.fetchall()
@@ -85,10 +91,11 @@ class Database:
 # spinning up the db for the first time
 if __name__ == "__main__":
     db = Database()
-    db.close()
 
     # little test script here to see if we can actually add shit
-    # db.clear_db()
-    # db.insert_file("wumba", "wumbo")
-    # db.insert_file("wiggle", "waggle")
-    # print(db.query_file("wiggle"))
+    db.clear_db()
+    db.insert_file("wumba", "wumbo")
+    db.insert_file("wiggle", "waggle")
+    print(db.query_file_content("wiggle"))
+
+    db.close()

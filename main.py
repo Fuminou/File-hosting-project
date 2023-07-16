@@ -12,7 +12,8 @@ view_uploaded_files = []
 #################################################
 # DATABASE STUFF HERE                           #
 #################################################
-filedb = Database()
+file_db = Database()
+
 
 def open_upload_files():
     global upload_window
