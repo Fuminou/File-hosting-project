@@ -94,8 +94,8 @@ if __name__ == "__main__":
 
     # little test script here to see if we can actually add shit
     db.clear_db()
-    db.insert_file("wumba", "wumbo")
-    db.insert_file("wiggle", "waggle")
-    print(db.query_file_content("wiggle"))
+    # db.insert_file("wumba", "wumbo")
+    # db.insert_file("wiggle", "waggle")
+    # print(db.query_file_content("wiggle"))
 
     db.close()

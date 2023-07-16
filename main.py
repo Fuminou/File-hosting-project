@@ -14,7 +14,6 @@ view_uploaded_files = []
 #################################################
 file_db = Database()
 
-
 def open_upload_files():
     global upload_window
 
@@ -73,6 +72,13 @@ def handle_files(files):
 
 
 def upload_files():
+
+    # grabbing all the files from the machine using the provided path strings
+    for path in uploaded_files:
+        with open(path, "rb") as f:
+            binaries = f.read()
+            file_db.insert_file(path, binaries)
+
     # Update the view uploaded files list
     global view_uploaded_files
     view_uploaded_files = uploaded_files.copy()
