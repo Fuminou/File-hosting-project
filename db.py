@@ -40,7 +40,7 @@ class Database:
     Simple method that inserts a file into the database
     """
 
-    def insert_file(self, file_name: str, file_content: bytes) -> None | str:
+    def insert_file(self, file_name: str, file_content: bytes):
         try:
             self.cursor.execute("INSERT INTO files (filename, contents) VALUES (?, ?)", (file_name, file_content))
             self.conn.commit()
@@ -52,7 +52,7 @@ class Database:
     Simple query method to find a file by its name, may add queries by index in the future
     """
 
-    def query_file(self, file_name: str) -> list | str:
+    def query_file(self, file_name: str):
         try:
             self.cursor.execute("SELECT * FROM files WHERE filename = ?", (file_name,))
             return self.cursor.fetchall()
@@ -64,7 +64,7 @@ class Database:
     Returns only the contents of the queried file.
     """
 
-    def query_file_content(self, file_name: str) -> bytes:
+    def query_file_content(self, file_name: str):
         return self.query_file(file_name)[0][1]
 
     """
@@ -79,7 +79,7 @@ class Database:
     Gets all the files in the db
     """
 
-    def get_all_files(self) -> list | str:
+    def get_all_files(self):
         try:
             self.cursor.execute("SELECT * FROM files")
             return self.cursor.fetchall()
@@ -100,12 +100,7 @@ class Database:
 if __name__ == "__main__":
     db = Database()
 
-    db.download_file("C:/Users/user/Downloads/db_test.pdf", "C:/Users/user/Downloads/FIT2081-Notes (1).pdf")
+    db.download_file("C:/Users/User/Downloads/brandon.txt" , "C:/Users/User/Downloads/message (5).txt")
 
-    # little test script here to see if we can actually add shit
-    db.clear_db()
-    # db.insert_file("wumba", "wumbo")
-    # db.insert_file("wiggle", "waggle")
-    # print(db.query_file_content("wiggle"))
 
     db.close()

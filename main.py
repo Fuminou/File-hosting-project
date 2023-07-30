@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from db import *
+import requests
+import shutil
+import os
 
 upload_window = None
 view_files_window = None
@@ -124,9 +127,11 @@ def open_view_files():
 
     # Add the desired functionality for the View Files window here
 
+list_files_view_upload_history = None  # Store the listbox widget for later use
 
 def open_view_upload_history():
     global view_upload_history_window
+    global list_files_view_upload_history  # Make the listbox widget global
 
     # Hide the main window
     window.withdraw()
@@ -141,15 +146,55 @@ def open_view_upload_history():
     btn_back.pack()
 
     # Create a listbox to display uploaded files
-    list_files = tk.Listbox(view_upload_history_window, width=40, height=10)
-    list_files.pack(pady=10)
+    list_files_view_upload_history = tk.Listbox(view_upload_history_window, width=40, height=10)
+    list_files_view_upload_history.pack(pady=10)
 
     # Populate the listbox with the uploaded files for view upload history
     for file in view_uploaded_files:
-        print(type(file))
-        list_files.insert(tk.END, file)
+        list_files_view_upload_history.insert(tk.END, file)
 
+    # Create an "Export CSV" button
+    btn_export_csv = tk.Button(view_upload_history_window, text="Export CSV", command=export_csv)
+    btn_export_csv.pack()
 
+def export_csv():
+    # Make a request to the microservice's /export_upload_history endpoint
+    url = "http://localhost:5000/export_upload_history"
+    response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Check if the old CSV file exists
+        if os.path.exists("upload_history.csv"):
+            # Save the received CSV data to a temporary file on the client's machine
+            with open("temp_upload_history.csv", "wb") as temp_file:
+                temp_file.write(response.content)
+
+            # Create a new CSV file and transfer the old and new contents to it
+            with open("upload_history.csv", "rb") as old_file, open("temp_upload_history.csv", "rb") as new_file:
+                with open("upload_history_new.csv", "wb") as combined_file:
+                    shutil.copyfileobj(old_file, combined_file)
+                    shutil.copyfileobj(new_file, combined_file)
+
+            # Remove the temporary file
+            os.remove("temp_upload_history.csv")
+
+            # Remove the old CSV file
+            os.remove("upload_history.csv")
+
+            # Rename the new CSV file to "upload_history.csv"
+            os.rename("upload_history_new.csv", "upload_history.csv")
+
+            print("CSV file exported successfully!")
+        else:
+            # If the old CSV file doesn't exist, create a new one
+            with open("upload_history.csv", "wb") as csv_file:
+                csv_file.write(response.content)
+
+            print("CSV file exported successfully!")
+    else:
+        print("Failed to export CSV file.")
+        
 def go_back_upload_files():
     global upload_window
     global uploaded_files
