@@ -73,19 +73,30 @@ def handle_files(files):
             uploaded_files.append(file)
             upload_window.list_files.insert(tk.END, file)
 
-
 def upload_files():
+    global uploaded_files
 
-    # grabbing all the files from the machine using the provided path strings
+    # Grabbing all the files from the machine using the provided path strings
     for path in uploaded_files:
         with open(path, "rb") as f:
             binaries = f.read()
-            file_db.insert_file(path, binaries)
+            file_db.insert_file(os.path.basename(path), binaries)
+
+    # Call the microservice's upload_files endpoint to upload the files to the microservice
+    url = "http://localhost:5000/upload_files"
+    files = {f"file_{i}": open(path, 'rb') for i, path in enumerate(uploaded_files)}
+    response = requests.post(url, files=files)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        print("Files uploaded successfully!")
+    else:
+        print("Failed to upload files to the microservice.")
 
     # Update the view uploaded files list
     global view_uploaded_files
     view_uploaded_files = uploaded_files.copy()
-
+    
     # Create a pop-up window to display the message
     popup_window = tk.Toplevel(upload_window)
     popup_window.title("Upload Status")
@@ -160,7 +171,7 @@ def open_view_upload_history():
 def export_csv():
     # Make a request to the microservice's /export_upload_history endpoint
     url = "http://localhost:5000/export_upload_history"
-    response = requests.get(url)
+    response = requests.post(url)
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
